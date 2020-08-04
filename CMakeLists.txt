@@ -23,6 +23,13 @@ string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 set(DEFAULT_CXX_COMPILE_FLAGS ${CMAKE_CXX_FLAGS_${BUILD_TYPE}})
 set(DEFAULT_Fortran_COMPILE_FLAGS ${CMAKE_Fortran_FLAGS_${BUILD_TYPE}})
 
+# fix type match enforcement introduced to some function calls with gcc-fortran 10.X
+if((CMAKE_Fortran_COMPILER_ID MATCHES GNU)
+    AND (CMAKE_Fortran_COMPILER_VERSION VERSION_GREATER 10.0 OR CMAKE_Fortran_COMPILER_VERSION VERSION_EQUAL 10.0))
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fallow-argument-mismatch")
+  #set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -std=legacy")  # legacy implies argument mismatch, use less strict option above
+endif()
+
 message(STATUS "*** Build Type:                " ${CMAKE_BUILD_TYPE})
 message(STATUS "*** Compiler Flags (CXX):      " ${DEFAULT_CXX_COMPILE_FLAGS})
 message(STATUS "*** Compiler Flags (Fortran):  " ${DEFAULT_Fortran_COMPILE_FLAGS})
